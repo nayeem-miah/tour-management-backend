@@ -21,3 +21,10 @@ project structure---- mvc vs modules mve pattern ----> i am using modules mvc pa
 modules mvc pattern ---> /src/app/modules/users || /src/app/modules/tour
 
 ---------------lets start codding 😊----------------------
+
+
+
+-----------checking  eslint error -------------------------
+typescript eslint --> read the documentation
+npm install --save-dev eslint @eslint/js typescript typescript-eslint
+npx eslint .  ---------> folder checking ---> npx eslint ./src
