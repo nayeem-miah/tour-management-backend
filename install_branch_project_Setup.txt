@@ -1,0 +1,30 @@
+git init
+create a new branch ----> git checkout -b development
+create .gitignore file then ---> node_modules 
+git add . and commit -m "init setup"
+
+-----------------------------------------------------
+create a new branch ----> git checkout -b project-setup
+npm init -y
+npm i -D typescript
+tsc --init
+then rootDir : "./srt" outDir : "./dist" 
+
+dependencies
+npm i express mongoose zod jsonwebtoken cors dotenv
+
+devDependencies
+npm i -D ts-node dev @types/express @types/cors @types/dotenv @types/jsonwebtoken
+create src and dist file ------- src/server.ts and src/app.ts
+
+project structure---- mvc vs modules mve pattern ----> i am using modules mvc pattern
+modules mvc pattern ---> /src/app/modules/users || /src/app/modules/tour
+
+---------------lets start codding 😊----------------------
+
+
+
+-----------checking  eslint error -------------------------
+typescript eslint --> read the documentation
+npm install --save-dev eslint @eslint/js typescript typescript-eslint
+npx eslint .  ---------> folder checking ---> npx eslint ./src
