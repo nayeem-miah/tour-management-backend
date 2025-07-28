@@ -19,3 +19,5 @@ create src and dist file ------- src/server.ts and src/app.ts
 
 project structure---- mvc vs modules mve pattern ----> i am using modules mvc pattern
 modules mvc pattern ---> /src/app/modules/users || /src/app/modules/tour
+
+---------------lets start codding 😊----------------------
