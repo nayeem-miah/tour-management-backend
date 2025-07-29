@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
 import { userServices } from "./user.service";
 import { createAsync } from "../../utils/catchAsync";
+import { sameResponse } from "../../utils/sameResponse";
 // import AppError from "../../errorHelpers/appError";
 
 // const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -26,9 +27,16 @@ import { createAsync } from "../../utils/catchAsync";
 const createUser = createAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = await userServices.createUser(req.body);
 
-    res.status(StatusCodes.CREATED).json({
-        message: "user created success",
-        user
+    // res.status(StatusCodes.CREATED).json({
+    //     message: "user created success",
+    //     user
+    // })
+
+    sameResponse(res, {
+        statusCode: StatusCodes.CREATED,
+        message: "user created successfully",
+        data: user,
+        success: true
     })
 })
 
@@ -48,11 +56,15 @@ const createUser = createAsync(async (req: Request, res: Response, next: NextFun
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getAllUsers = createAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const users = await userServices.getAllUsers();
-    res.status(StatusCodes.OK).json({
+    const result = await userServices.getAllUsers();
+
+    sameResponse(res, {
         success: true,
-        message: "all received success",
-        data: users
+        statusCode: StatusCodes.CREATED,
+        message: "all users retrieved  successfully",
+        data: result.data,
+        meta: result.meta
+
     })
 })
 
