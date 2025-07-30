@@ -28,3 +28,5 @@ modules mvc pattern ---> /src/app/modules/users || /src/app/modules/tour
 typescript eslint --> read the documentation
 npm install --save-dev eslint @eslint/js typescript typescript-eslint
 npx eslint .  ---------> folder checking ---> npx eslint ./src
+
+creating branch part-1 ---------> part-2 
