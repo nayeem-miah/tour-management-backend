@@ -1,12 +1,22 @@
 import { Router } from "express";
 import { UserRoutes } from "../modules/user/user.route";
+import { AuthRoutes } from "../modules/auth/auth.route";
 
 export const router = Router();
+interface IModule {
+    path: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    route: any
 
-const moduleRoutes = [
+}
+
+const moduleRoutes: IModule[] = [
     {
         path: "/user",
         route: UserRoutes
+    }, {
+        path: "/auth",
+        route: AuthRoutes
     }
 ];
 
