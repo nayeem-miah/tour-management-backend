@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserControllers } from "./user.controller";
-import { createUserZodSchema } from "./user.validation";
+import { createUserZodSchema, updatedUserZodSchema } from "./user.validation";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "./user.interface";
@@ -14,6 +14,6 @@ router.post("/register", validateRequest(createUserZodSchema), UserControllers.c
 router.get("/all-users", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), UserControllers.getAllUsers
 );
 
-router.patch("/:id", checkAuth(...Object.values(Role)), UserControllers.updateUser)
+router.patch("/:id", validateRequest(updatedUserZodSchema), checkAuth(...Object.values(Role)), UserControllers.updateUser)
 
 export const UserRoutes = router;
