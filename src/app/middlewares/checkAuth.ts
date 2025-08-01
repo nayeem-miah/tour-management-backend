@@ -18,7 +18,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
         if (!authRoles.includes(verifyToken.role)) {
             throw new AppError(StatusCodes.BAD_REQUEST, "you are not permeated to view this route")
         }
-
+        req.user = verifyToken
         next()
     } catch (error) {
         next(error)
