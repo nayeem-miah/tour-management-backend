@@ -1,9 +1,12 @@
+
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../errorHelpers/appError";
 import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import bcrypt from 'bcryptjs';
 import { createNewAccessTokenWithRefreshToken, createUserToken } from "../../utils/userToken";
+import { JwtPayload } from "jsonwebtoken";
+import { envVars } from "../../config/env";
 
 
 const credentialsLogin = async (payload: Partial<IUser>) => {
@@ -46,9 +49,28 @@ const getNewAccessToken = async (refreshToken: string) => {
 
 };
 
+const resetPassword = async (oldPassword: string, newPassword: string, decodedToken: JwtPayload) => {
+
+    const user = await User.findById(decodedToken.userId);
+    if (!user) {
+        throw new AppError(StatusCodes.BAD_REQUEST, "user not found ")
+    }
+
+    const isOldPasswordMatch = await bcrypt.compare(oldPassword, user.password as string);
+
+    if (!isOldPasswordMatch) {
+        throw new AppError(StatusCodes.BAD_REQUEST, "old password does't match")
+    }
+
+    user.password = await bcrypt.hash(newPassword, Number(envVars.BCRYPT_SLOT_ROUND));
+    user.save()
+    return true
+}
+
 // user ----> login-- token (email, role , _id ) ---booking / payment / booking / payment cancel  ---token 
 
-export const autServices = {
+export const authServices = {
     credentialsLogin,
-    getNewAccessToken
+    getNewAccessToken,
+    resetPassword
 }

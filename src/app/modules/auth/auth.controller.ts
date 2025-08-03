@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { createAsync } from "../../utils/catchAsync";
 import { sameResponse } from "../../utils/sameResponse";
 import { StatusCodes } from "http-status-codes";
-import { autServices } from "./auth.service";
+import { authServices } from "./auth.service";
 import AppError from "../../errorHelpers/appError";
 import { setAuthCookie } from "../../utils/setCookie";
 
@@ -10,7 +10,7 @@ import { setAuthCookie } from "../../utils/setCookie";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const credentialsLogin = createAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    const loginInfo = await autServices.credentialsLogin(req.body);
+    const loginInfo = await authServices.credentialsLogin(req.body);
 
     // res.cookie("accessToken", loginInfo.accessToken, {
     //     httpOnly: true,
@@ -39,7 +39,7 @@ const getNewAccessToken = createAsync(async (req: Request, res: Response, next: 
     if (!refreshToken) {
         throw new AppError(StatusCodes.BAD_REQUEST, "no refresh token received cookies")
     }
-    const tokenInfo = await autServices.getNewAccessToken(refreshToken as string);
+    const tokenInfo = await authServices.getNewAccessToken(refreshToken as string);
 
     // res.cookie("accessToken", tokenInfo.accessToken, {
     //     httpOnly: true,
@@ -77,10 +77,26 @@ const logout = createAsync(async (req: Request, res: Response, next: NextFunctio
         data: null
     })
 });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const resetPassword = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+
+    await authServices.resetPassword(oldPassword, newPassword, decodedToken);
+
+    sameResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "User password changed successfully",
+        data: null
+    })
+});
 
 
 export const AuthControllers = {
     credentialsLogin,
     getNewAccessToken,
-    logout
+    logout,
+    resetPassword
 }
