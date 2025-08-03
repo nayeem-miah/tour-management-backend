@@ -103,6 +103,11 @@ const resetPassword = createAsync(async (req: Request, res: Response, next: Next
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const googleCallbackController = createAsync(async (req: Request, res: Response, next: NextFunction) => {
 
+    let redirectTo = req.query.state ? req.query.state as string : "";
+
+    if (redirectTo.startsWith("/")) {
+        redirectTo = redirectTo.slice()
+    }
     const user = req.user;
 
     // console.log("google login user", user);
@@ -113,7 +118,7 @@ const googleCallbackController = createAsync(async (req: Request, res: Response,
     const tokenInfo = createUserToken(user)
     setAuthCookie(res, tokenInfo)
 
-    res.redirect(envVars.FRONTEND_URL)
+    res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`)
 });
 
 
