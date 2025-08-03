@@ -5,6 +5,9 @@ import { StatusCodes } from "http-status-codes";
 import { authServices } from "./auth.service";
 import AppError from "../../errorHelpers/appError";
 import { setAuthCookie } from "../../utils/setCookie";
+import { createUserToken } from "../../utils/userToken";
+import { envVars } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -32,6 +35,7 @@ const credentialsLogin = createAsync(async (req: Request, res: Response, next: N
         data: loginInfo
     })
 });
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getNewAccessToken = createAsync(async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
@@ -55,6 +59,7 @@ const getNewAccessToken = createAsync(async (req: Request, res: Response, next: 
         data: tokenInfo
     })
 });
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logout = createAsync(async (req: Request, res: Response, next: NextFunction) => {
 
@@ -77,13 +82,15 @@ const logout = createAsync(async (req: Request, res: Response, next: NextFunctio
         data: null
     })
 });
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const resetPassword = createAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const decodedToken = req.user
+    const decodedToken = req.user;
     const oldPassword = req.body.oldPassword;
     const newPassword = req.body.newPassword;
 
-    await authServices.resetPassword(oldPassword, newPassword, decodedToken);
+
+    await authServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
 
     sameResponse(res, {
         success: true,
@@ -93,10 +100,28 @@ const resetPassword = createAsync(async (req: Request, res: Response, next: Next
     })
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const googleCallbackController = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const user = req.user;
+
+    // console.log("google login user", user);
+
+    if (!user) {
+        throw new AppError(StatusCodes.NOT_FOUND, "USer not found");
+    }
+    const tokenInfo = createUserToken(user)
+    setAuthCookie(res, tokenInfo)
+
+    res.redirect(envVars.FRONTEND_URL)
+});
+
+
 
 export const AuthControllers = {
     credentialsLogin,
     getNewAccessToken,
     logout,
-    resetPassword
+    resetPassword,
+    googleCallbackController
 }
