@@ -51,13 +51,36 @@ const getNewAccessToken = createAsync(async (req: Request, res: Response, next: 
     sameResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
-        message: "User login successfully",
+        message: "new access token retrieved successfully",
         data: tokenInfo
+    })
+});
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const logout = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax"
+    })
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax"
+    })
+
+    sameResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "User logout successfully",
+        data: null
     })
 });
 
 
 export const AuthControllers = {
     credentialsLogin,
-    getNewAccessToken
+    getNewAccessToken,
+    logout
 }
