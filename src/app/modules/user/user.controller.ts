@@ -4,6 +4,7 @@ import StatusCodes from "http-status-codes";
 import { userServices } from "./user.service";
 import { createAsync } from "../../utils/catchAsync";
 import { sameResponse } from "../../utils/sameResponse";
+import { JwtPayload } from "jsonwebtoken";
 
 // import AppError from "../../errorHelpers/appError";
 
@@ -49,7 +50,7 @@ const updateUser = createAsync(async (req: Request, res: Response, next: NextFun
     // const verifyToken = verifyTokens(token as string, envVars.JWT_ACCESS_SECRET) as JwtPayload
     const verifyToken = req.user
     const payload = req.body
-    const user = await userServices.updateUser(userId, payload, verifyToken)
+    const user = await userServices.updateUser(userId, payload, verifyToken as JwtPayload)
 
 
     sameResponse(res, {
