@@ -8,12 +8,46 @@ import { setAuthCookie } from "../../utils/setCookie";
 import { createUserToken } from "../../utils/userToken";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import passport from "passport";
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const credentialsLogin = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
+        if (err) {
+            // console.log("from error");
+            // return next(err)
+            return next(new AppError(401, err))
+        };
+        if (!user) {
+            // console.log("from not user");
+            return next(new AppError(401, info.message))
+        }
 
-    const loginInfo = await authServices.credentialsLogin(req.body);
+        const userToken = await createUserToken(user)
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: pass, ...rest } = user.toObject()
+
+        setAuthCookie(res, userToken)
+
+
+        sameResponse(res, {
+            success: true,
+            statusCode: StatusCodes.OK,
+            message: "User login successfully",
+            data: {
+                accessToken: userToken.accessToken,
+                refreshToken: userToken.refreshToken,
+                user: rest
+            }
+        })
+    })(req, res, next)
+
+
+    //  manually system--------------------------------
+
+    // const loginInfo = await authServices.credentialsLogin(req.body);
 
     // res.cookie("accessToken", loginInfo.accessToken, {
     //     httpOnly: true,
@@ -25,15 +59,15 @@ const credentialsLogin = createAsync(async (req: Request, res: Response, next: N
     //     secure: false
     // })
 
-    setAuthCookie(res, loginInfo)
+    // setAuthCookie(res, loginInfo)
 
 
-    sameResponse(res, {
-        success: true,
-        statusCode: StatusCodes.OK,
-        message: "User login successfully",
-        data: loginInfo
-    })
+    // sameResponse(res, {
+    //     success: true,
+    //     statusCode: StatusCodes.OK,
+    //     message: "User login successfully",
+    //     data: loginInfo
+    // })
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
