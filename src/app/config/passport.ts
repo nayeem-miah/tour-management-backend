@@ -38,7 +38,6 @@ passport.use(
             // check password
             const isPasswordMatch = await bcrypt.compare(password as string, isUserExists.password as string);
 
-            console.log(isPasswordMatch, "password is match");
             // incorrect password
             if (!isPasswordMatch) {
                 return done(null, false, { message: "Invalid email or password" })
