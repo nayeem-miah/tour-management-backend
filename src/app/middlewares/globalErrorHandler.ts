@@ -1,25 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express"
 import { envVars } from "../config/env"
 import AppError from "../errorHelpers/appError";
+import { handleDuplicate } from "../helpers/handleDuplicate";
+import { handleCastError } from "../helpers/handleCastError";
+import { handleZodError } from "../helpers/handleZodError";
+import { handleValidationError } from "../helpers/handleValidationError";
+import { TErrorSource } from "../interfaces/error.types";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-
-    /**
-     * mongoose 
-     * Zod
-     */
-
-    /**
-     * mongoose error ----> duplicate error , CastError ,  validation error
-     */
-    const errorSources: any = [
-        // {
-        //     path: "isDeleted",
-        //     message: "Cast failed"
-        // }
-    ];
+    if (envVars.NODE_ENV === "development") {
+        console.log(err);
+    }
+    let errorSources: TErrorSource[] = [];
 
     let statusCode = 500;
     let message = `something went wrong !! `
@@ -27,30 +22,36 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     // duplicate error
     if (err.code === 11000) {
         // console.log("duplicate error", err.message);
-        const matchArray = err.message.match(/"([^"]*)"/)
-        statusCode = 400
-        message = `${matchArray[1]} already exists`
+        const simplifyError = handleDuplicate(err)
+        statusCode = simplifyError.statusCode
+        message = simplifyError.message
     }
     // CastError---> object id error 
     else if (err.name === "CastError") {
-        statusCode = 400;
-        message = "Invalid Mongodb objectId ...please provide a valid id"
+        const simplifyError = handleCastError(err);
+        statusCode = simplifyError.statusCode
+        message = simplifyError.message
     }
+    // zod error
+    else if (err.name === "ZodError") {
+        const simplifyError = handleZodError(err);
+        statusCode = simplifyError.statusCode;
+        message = simplifyError.message,
+            errorSources = simplifyError.errorSources as TErrorSource[]
+    }
+    // mongoose validation error 
     else if (err.name === "ValidationError") {
-        statusCode = 400;
-        const errors = Object.values(err.errors);
-
-        errors.forEach((errorObject: any) => errorSources.push({
-            path: errorObject.path,
-            message: errorObject.message
-        }))
-
-        message = err.message
+        const simplifyError = handleValidationError(err);
+        statusCode = simplifyError.statusCode,
+            message = simplifyError.message,
+            errorSources = simplifyError.errorSources as TErrorSource[]
     }
+
     else if (err instanceof AppError) {
         statusCode = err.statusCode;
         message = err.message
-    } else if (err instanceof Error) {
+    }
+    else if (err instanceof Error) {
         statusCode = 500;
         message = err.message
     }
@@ -59,7 +60,7 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
         success: false,
         message,
         errorSources,
-        // err,
+        err: envVars.NODE_ENV === "development" ? err : null,
         stack: envVars.NODE_ENV === "development" ? err.stack : null
     })
 }
