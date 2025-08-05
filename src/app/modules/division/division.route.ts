@@ -13,7 +13,8 @@ router.post("/create",
     DivisionController.createDivision
 );
 
-router.get("/", DivisionController.getAllDivision)
+router.get("/", DivisionController.getAllDivision);
+router.get("/:slug", DivisionController.getSingleDivision)
 
 
 export const DivisionRoutes = router;

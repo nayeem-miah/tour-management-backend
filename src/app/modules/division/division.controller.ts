@@ -26,9 +26,24 @@ const getAllDivision = createAsync(async (req: Request, res: Response, next: Nex
         data: result.data,
         meta: result.meta,
     });
+});
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getSingleDivision = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const slug = req.params.slug;
+    const result = await DivisionServices.getSingleDivision(slug);
+
+    sameResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "single division get success",
+        data: result.data
+    })
+
 })
 
 export const DivisionController = {
     createDivision,
-    getAllDivision
+    getAllDivision,
+    getSingleDivision
 }

@@ -25,11 +25,19 @@ const getAllDivision = async () => {
     }
 }
 
+const getSingleDivision = async (slug: string) => {
+    const division = await Division.findOne({ slug });
+
+    return {
+        data: division
+    }
+}
 
 
 
 
 export const DivisionServices = {
     createDivision,
-    getAllDivision
+    getAllDivision,
+    getSingleDivision
 }
