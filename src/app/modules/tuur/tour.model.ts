@@ -1,5 +1,18 @@
 import { model, Schema } from "mongoose";
-import { ITour } from "./tour.interface";
+import { ITour, ITourType } from "./tour.interface";
+
+
+const tourTypesSchema = new Schema<ITourType>({
+    name: { type: String, required: true, unique: true }
+}, {
+    timestamps: true,
+    // versionKey: false,
+    // _id : false
+})
+
+export const tourType = model<ITourType>("tourType", tourTypesSchema)
+
+
 
 const tourSchema = new Schema<ITour>({
     title: {
@@ -30,7 +43,7 @@ const tourSchema = new Schema<ITour>({
     },
     tourType: {
         type: Schema.Types.ObjectId,
-        ref: "",
+        ref: "tourType",
         required: true
     }
 }, {
@@ -38,4 +51,4 @@ const tourSchema = new Schema<ITour>({
     versionKey: false
 });
 
-export const Tour = model<ITour>("tour", tourSchema)
+export const Tour = model<ITour>("Tour", tourSchema)
