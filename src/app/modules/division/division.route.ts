@@ -11,8 +11,9 @@ router.post("/create",
     checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
     validateRequest(createDivisionSchema),
     DivisionController.createDivision
+);
 
-)
+router.get("/", DivisionController.getAllDivision)
 
 
-export const DivisionRoutes = router
+export const DivisionRoutes = router;

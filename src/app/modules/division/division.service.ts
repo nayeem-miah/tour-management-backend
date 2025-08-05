@@ -11,6 +11,18 @@ const createDivision = async (payload: Partial<IDivision>) => {
 
     const division = await Division.create(payload);
     return division
+};
+
+const getAllDivision = async () => {
+    const division = await Division.find();
+    const totalDivisions = await Division.countDocuments();
+
+    return {
+        data: division,
+        meta: {
+            total: totalDivisions
+        }
+    }
 }
 
 
@@ -18,5 +30,6 @@ const createDivision = async (payload: Partial<IDivision>) => {
 
 
 export const DivisionServices = {
-    createDivision
+    createDivision,
+    getAllDivision
 }
