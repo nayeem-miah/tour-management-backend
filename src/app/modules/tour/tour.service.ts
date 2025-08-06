@@ -52,9 +52,42 @@ const getAllTours = async (query: Record<string, string>) => {
 
 
 
+const updateTour = async (id: string, payload: Partial<ITour>) => {
+
+    const existingTour = await Tour.findById(id);
+
+    if (!existingTour) {
+        throw new Error("Tour not found.");
+    }
+
+    // if (payload.title) {
+    //     const baseSlug = payload.title.toLowerCase().split(" ").join("-")
+    //     let slug = `${baseSlug}`
+
+    //     let counter = 0;
+    //     while (await Tour.exists({ slug })) {
+    //         slug = `${slug}-${counter++}` // dhaka-division-2
+    //     }
+
+    //     payload.slug = slug
+    // }
+
+    const updatedTour = await Tour.findByIdAndUpdate(id, payload, { new: true });
+
+    return updatedTour;
+};
+
+const deleteTour = async (id: string) => {
+    const tour = await Tour.findByIdAndDelete(id)
+    return tour
+}
+
+
 
 
 export const TourServices = {
     createTour,
-    getAllTours
+    getAllTours,
+    updateTour,
+    deleteTour
 }
