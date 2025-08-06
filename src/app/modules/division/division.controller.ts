@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from "express";
-import { createAsync } from "../../utils/catchAsync";
+import { catchAsync } from "../../utils/catchAsync";
 import { StatusCodes } from "http-status-codes";
-import { sameResponse } from "../../utils/sameResponse";
+import { sendResponse } from "../../utils/sendResponse";
 import { DivisionServices } from "./division.service";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const createDivision = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const createDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const newDivision = await DivisionServices.createDivision(req.body);
 
-    sameResponse(res, {
+    sendResponse(res, {
         statusCode: StatusCodes.CREATED,
         message: "Division created successfully",
         data: newDivision,
@@ -17,9 +17,9 @@ const createDivision = createAsync(async (req: Request, res: Response, next: Nex
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getAllDivision = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const getAllDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await DivisionServices.getAllDivision();
-    sameResponse(res, {
+    sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
         message: "Divisions retrieved",
@@ -29,11 +29,11 @@ const getAllDivision = createAsync(async (req: Request, res: Response, next: Nex
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getSingleDivision = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const getSingleDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const slug = req.params.slug;
     const result = await DivisionServices.getSingleDivision(slug);
 
-    sameResponse(res, {
+    sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
         message: "single division get success",
@@ -42,11 +42,11 @@ const getSingleDivision = createAsync(async (req: Request, res: Response, next: 
 
 })
 
-const updateDivision = createAsync(async (req: Request, res: Response) => {
+const updateDivision = catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id;
     const result = await DivisionServices.updateDivision(id, req.body);
 
-    sameResponse(res, {
+    sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
         message: "division updated success",
@@ -55,11 +55,11 @@ const updateDivision = createAsync(async (req: Request, res: Response) => {
 
 })
 
-const deleteDivision = createAsync(async (req: Request, res: Response) => {
+const deleteDivision = catchAsync(async (req: Request, res: Response) => {
 
     const result = await DivisionServices.deleteDivision(req.params.id);
 
-    sameResponse(res, {
+    sendResponse(res, {
         statusCode: 200,
         success: true,
         message: "Division deleted",
