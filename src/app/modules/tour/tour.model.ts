@@ -5,12 +5,10 @@ import { ITour, ITourType } from "./tour.interface";
 const tourTypesSchema = new Schema<ITourType>({
     name: { type: String, required: true, unique: true }
 }, {
-    timestamps: true,
-    // versionKey: false,
-    // _id : false
+    timestamps: true
 })
 
-export const tourType = model<ITourType>("tourType", tourTypesSchema)
+export const TourType = model<ITourType>("tourType", tourTypesSchema)
 
 
 

@@ -50,9 +50,62 @@ const deleteTour = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+
+//  tour types 
+const getAllTourTypes = catchAsync(async (req: Request, res: Response) => {
+    const result = await TourServices.getAllTourTypes();
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Tour types retrieved successfully',
+        data: result,
+    });
+});
+
+
+const createTourType = catchAsync(async (req: Request, res: Response) => {
+
+    const result = await TourServices.createTourType(req.body);
+
+    sendResponse(res, {
+        statusCode: 201,
+        success: true,
+        message: 'Tour type created successfully',
+        data: result,
+    });
+});
+
+const updateTourType = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    // const { name } = req.body;
+    const result = await TourServices.updateTourType(id, req.body);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Tour type updated successfully',
+        data: result,
+    });
+});
+
+const deleteTourType = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await TourServices.deleteTourType(id);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Tour type deleted successfully',
+        data: result,
+    });
+});
+
 export const TourController = {
     createTour,
     getAllTours,
     deleteTour,
-    updateTour
+    updateTour,
+
+    createTourType,
+    getAllTourTypes,
+    updateTourType,
+    deleteTourType
 }

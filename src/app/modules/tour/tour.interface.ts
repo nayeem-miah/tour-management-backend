@@ -3,7 +3,6 @@ import { Types } from "mongoose";
 
 export interface ITourType {
     name: string,
-
 }
 
 export interface ITour {
