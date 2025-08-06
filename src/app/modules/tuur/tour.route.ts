@@ -13,7 +13,7 @@ const router = Router();
 
 // --------------Tour -----------------
 
-router.get("/", TourController.getAllTour);
+router.get("/", TourController.getAllTours);
 
 router.post("/create",
     checkAuth(Role.SUPER_ADMIN, Role.ADMIN),
