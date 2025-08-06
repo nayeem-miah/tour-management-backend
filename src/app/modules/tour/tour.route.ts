@@ -3,12 +3,31 @@ import { TourController } from "./tour.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
 import { validateRequest } from "../../middlewares/validateRequest";
-import { createTourZodSchema, updateTourZodSchema } from "./tour.validation";
+import { createTourTypeZodSchema, createTourZodSchema, updateTourZodSchema } from "./tour.validation";
 
 const router = Router();
 
+/* ------------------ TOUR TYPE ROUTES -------------------- */
+router.get("/tour-types", TourController.getAllTourTypes);
 
+router.post(
+    "/create-tour-type",
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+    validateRequest(createTourTypeZodSchema),
+    TourController.createTourType
+);
 
+router.patch(
+    "/tour-types/:id",
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+    validateRequest(createTourTypeZodSchema),
+    TourController.updateTourType
+);
+
+router.delete("/tour-types/:id",
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+    TourController.deleteTourType
+);
 
 
 // --------------Tour Route-----------------
