@@ -50,6 +50,7 @@ const updateDivision = async (id: string, payload: Partial<IDivision>) => {
         throw new Error("A division with this name already exists.");
     }
 
+
     // if (payload.name) {
     //     const baseSlug = payload.name.toLowerCase().split(" ").join("-")
     //     let slug = `${baseSlug}-division`
