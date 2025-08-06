@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { createAsync } from "../../utils/catchAsync";
-import { sameResponse } from "../../utils/sameResponse";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import { authServices } from "./auth.service";
 import AppError from "../../errorHelpers/appError";
@@ -11,7 +11,7 @@ import { JwtPayload } from "jsonwebtoken";
 import passport from "passport";
 
 
-const credentialsLogin = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     passport.authenticate("local", async (err: any, user: any, info: any) => {
         if (err) {
@@ -32,7 +32,7 @@ const credentialsLogin = createAsync(async (req: Request, res: Response, next: N
         setAuthCookie(res, userToken)
 
 
-        sameResponse(res, {
+        sendResponse(res, {
             success: true,
             statusCode: StatusCodes.OK,
             message: "User login successfully",
@@ -71,7 +71,7 @@ const credentialsLogin = createAsync(async (req: Request, res: Response, next: N
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getNewAccessToken = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const getNewAccessToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
@@ -86,7 +86,7 @@ const getNewAccessToken = createAsync(async (req: Request, res: Response, next: 
 
     setAuthCookie(res, tokenInfo)
 
-    sameResponse(res, {
+    sendResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
         message: "new access token retrieved successfully",
@@ -95,7 +95,7 @@ const getNewAccessToken = createAsync(async (req: Request, res: Response, next: 
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const logout = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     res.clearCookie("accessToken", {
         httpOnly: true,
@@ -109,7 +109,7 @@ const logout = createAsync(async (req: Request, res: Response, next: NextFunctio
         sameSite: "lax"
     })
 
-    sameResponse(res, {
+    sendResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
         message: "User logout successfully",
@@ -118,7 +118,7 @@ const logout = createAsync(async (req: Request, res: Response, next: NextFunctio
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const resetPassword = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user;
     const oldPassword = req.body.oldPassword;
     const newPassword = req.body.newPassword;
@@ -126,7 +126,7 @@ const resetPassword = createAsync(async (req: Request, res: Response, next: Next
 
     await authServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
 
-    sameResponse(res, {
+    sendResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
         message: "User password changed successfully",
@@ -135,7 +135,7 @@ const resetPassword = createAsync(async (req: Request, res: Response, next: Next
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const googleCallbackController = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     let redirectTo = req.query.state ? req.query.state as string : "";
 

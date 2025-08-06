@@ -2,8 +2,8 @@
 import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
 import { userServices } from "./user.service";
-import { createAsync } from "../../utils/catchAsync";
-import { sameResponse } from "../../utils/sameResponse";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
 import { JwtPayload } from "jsonwebtoken";
 
 // import AppError from "../../errorHelpers/appError";
@@ -26,7 +26,7 @@ import { JwtPayload } from "jsonwebtoken";
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const createUser = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = await userServices.createUser(req.body);
 
     // res.status(StatusCodes.CREATED).json({
@@ -34,7 +34,7 @@ const createUser = createAsync(async (req: Request, res: Response, next: NextFun
     //     user
     // })
 
-    sameResponse(res, {
+    sendResponse(res, {
         statusCode: StatusCodes.CREATED,
         message: "user created successfully",
         data: user,
@@ -43,7 +43,7 @@ const createUser = createAsync(async (req: Request, res: Response, next: NextFun
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const updateUser = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id
 
     // const token = req.headers.authorization;
@@ -53,7 +53,7 @@ const updateUser = createAsync(async (req: Request, res: Response, next: NextFun
     const user = await userServices.updateUser(userId, payload, verifyToken as JwtPayload)
 
 
-    sameResponse(res, {
+    sendResponse(res, {
         statusCode: StatusCodes.CREATED,
         message: "user updated successfully",
         data: user,
@@ -76,10 +76,10 @@ const updateUser = createAsync(async (req: Request, res: Response, next: NextFun
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getAllUsers = createAsync(async (req: Request, res: Response, next: NextFunction) => {
+const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await userServices.getAllUsers();
 
-    sameResponse(res, {
+    sendResponse(res, {
         success: true,
         statusCode: StatusCodes.CREATED,
         message: "all users retrieved  successfully",
