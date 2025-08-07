@@ -3,24 +3,26 @@ import { tourSearchableFields } from "./tour.constant";
 import { ITour, ITourType } from "./tour.interface";
 import { Tour, TourType } from "./tour.model";
 
-const createTour = async (payload: Partial<ITour>) => {
-    const existingTour = await Tour.findOne({ title: payload.title });
 
+const createTour = async (payload: ITour) => {
+    const existingTour = await Tour.findOne({ title: payload.title });
     if (existingTour) {
         throw new Error("A tour with this title already exists.");
     }
-    const baseSlug = payload.title?.toLowerCase().split(" ").join("-")
+
+    const baseSlug = payload.title.toLowerCase().split(" ").join("-")
     let slug = `${baseSlug}`
 
     let counter = 0;
     while (await Tour.exists({ slug })) {
-        slug = `${slug}-${counter++}` // dhaka-2
+        slug = `${slug}-${counter++}` // dhaka-division-2
     }
 
     payload.slug = slug;
 
-    const tour = await Tour.create(payload);
-    return tour
+    const tour = await Tour.create(payload)
+
+    return tour;
 };
 
 

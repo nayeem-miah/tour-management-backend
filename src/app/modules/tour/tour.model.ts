@@ -53,22 +53,23 @@ const tourSchema = new Schema<ITour>({
 
 
 
+
 // tourSchema.pre("save", async function (next) {
+
 //     if (this.isModified("title")) {
 //         const baseSlug = this.title.toLowerCase().split(" ").join("-")
-//         let slug = `${baseSlug}`;
+//         let slug = `${baseSlug}`
 
-//         let counter = 0
+//         let counter = 0;
 //         while (await Tour.exists({ slug })) {
-//             slug = `${slug}-${counter++}`  // dhaka-1
+//             slug = `${slug}-${counter++}`
 //         }
 
 //         this.slug = slug;
-
 //     }
-
 //     next()
 // })
+
 
 tourSchema.pre("findOneAndUpdate", async function (next) {
     const tour = this.getUpdate() as Partial<ITour>
