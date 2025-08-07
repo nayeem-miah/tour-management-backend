@@ -11,7 +11,7 @@ const createTour = catchAsync(async (req: Request, res: Response) => {
         message: 'Tour created successfully',
         data: result,
     });
-})
+});
 
 
 const getAllTours = catchAsync(async (req: Request, res: Response) => {
