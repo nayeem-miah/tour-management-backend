@@ -10,7 +10,6 @@ const divisionSchema = new Schema<IDivision>({
     },
     slug: {
         type: String,
-        required: true,
         unique: true
     },
     thumbnail: {
@@ -22,22 +21,22 @@ const divisionSchema = new Schema<IDivision>({
 });
 
 
-// divisionSchema.pre("save", async function (next) {
-//     if (this.isModified("name")) {
-//         const baseSlug = (this.name as string).toLowerCase().split(" ").join("-")
-//         let slug = `${baseSlug}-division`;
+divisionSchema.pre("save", async function (next) {
+    if (this.isModified("name")) {
+        const baseSlug = (this.name as string).toLowerCase().split(" ").join("-")
+        let slug = `${baseSlug}-division`;
 
-//         let counter = 0
-//         while (await Division.exists({ slug })) {
-//             slug = `${slug}-${counter++}`  // dhaka-division-1
-//         }
+        let counter = 0
+        while (await Division.exists({ slug })) {
+            slug = `${slug}-${counter++}`  // dhaka-division-1
+        }
 
-//         this.slug = slug;
+        this.slug = slug;
 
-//     }
+    }
 
-//     next()
-// })
+    next()
+})
 
 divisionSchema.pre("findOneAndUpdate", async function (next) {
     const division = this.getUpdate() as Partial<IDivision>
