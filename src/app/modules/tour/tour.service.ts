@@ -1,3 +1,5 @@
+
+import { excludeField } from "../../constants";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { tourSearchableFields } from "./tour.constant";
 import { ITour, ITourType } from "./tour.interface";
@@ -28,23 +30,58 @@ const createTour = async (payload: ITour) => {
 
 const getAllTours = async (query: Record<string, string>) => {
 
+    // const queryBuilder = new QueryBuilder(Tour.find(), query)
 
-    const queryBuilder = new QueryBuilder(Tour.find(), query)
+    // const tours = await queryBuilder
+    //     .search(tourSearchableFields)
+    //     .filter()
+    //     .sort()
+    //     .fields()
+    //     .paginate()
 
-    const tours = await queryBuilder
-        .search(tourSearchableFields)
-        .filter()
-        .sort()
-        .fields()
-        .paginate()
+    // // const meta = await queryBuilder.getMeta()
 
-    // const meta = await queryBuilder.getMeta()
+    // const [data, meta] = await Promise.all([
+    //     tours.build(),
+    //     queryBuilder.getMeta()
+    // ])
 
-    const [data, meta] = await Promise.all([
-        tours.build(),
-        queryBuilder.getMeta()
-    ])
+    const filter = query
+    console.log(filter);
+    const searchTerm = query.searchTerm || "";
+    const sort = query.sort || "-createdAt";
+    // field filtering
+    const fields = query.fields.split(",").join(" ") || ""
 
+    // old  ----> title,location
+    // new -----> title location
+
+    delete filter["searchTerm"];
+    delete filter["sort"]
+
+
+
+    for (const field of excludeField) {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete filter[field];
+    }
+
+
+    const searchQuery = { $or: tourSearchableFields.map(field => ({ [field]: { $regex: searchTerm, $options: "i" } })) }
+
+
+    // const data = await Tour.find(
+    //     {
+    //     // title: { $regex: searchTerm, $options: "i" }
+
+    //     $or: [
+    //         { title: { $regex: searchTerm, $options: "i" } },
+    //         { description: { $regex: searchTerm, $options: "i" } },
+    //         { location: { $regex: searchTerm, $options: "i" } }
+    //     ]
+    // })
+    const data = await Tour.find(searchQuery).find(filter).sort(sort).select(fields)
+    const meta = await Tour.countDocuments();
 
     return {
         data,
