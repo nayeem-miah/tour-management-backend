@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { StatusCodes } from "http-status-codes";
 import { sendResponse } from "../../utils/sendResponse";
 import { DivisionServices } from "./division.service";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const createDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+const createDivision = catchAsync(async (req: Request, res: Response) => {
     const newDivision = await DivisionServices.createDivision(req.body);
 
     sendResponse(res, {
@@ -16,9 +16,11 @@ const createDivision = catchAsync(async (req: Request, res: Response, next: Next
     })
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getAllDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await DivisionServices.getAllDivision();
+
+const getAllDivision = catchAsync(async (req: Request, res: Response) => {
+
+    const query = req.query
+    const result = await DivisionServices.getAllDivision(query as Record<string, string>);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
@@ -28,8 +30,8 @@ const getAllDivision = catchAsync(async (req: Request, res: Response, next: Next
     });
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getSingleDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+const getSingleDivision = catchAsync(async (req: Request, res: Response) => {
     const slug = req.params.slug;
     const result = await DivisionServices.getSingleDivision(slug);
 
