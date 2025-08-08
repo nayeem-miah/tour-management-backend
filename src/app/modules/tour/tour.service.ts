@@ -201,8 +201,7 @@ const deleteTourType = async (id: string) => {
 };
 
 const getSingleTourTypes = async (id: string) => {
-
-    const result = await TourType.findOne({ id })
+    const result = await TourType.findById(id)
 
     return {
         data: result

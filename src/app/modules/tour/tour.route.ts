@@ -9,7 +9,7 @@ const router = Router();
 
 /* ------------------ TOUR TYPE ROUTES -------------------- */
 router.get("/tour-types", TourController.getAllTourTypes);
-// router.get("/:id", TourController.getSingleTourTypes)
+router.get("/:id", TourController.getSingleTourTypes)
 
 router.post(
     "/create-tour-type",
