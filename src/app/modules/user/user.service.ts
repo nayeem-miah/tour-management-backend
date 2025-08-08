@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcryptjs"
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import { QueryBuilder } from "../../utils/QueryBuilder";
 
 const createUser = async (payload: Partial<IUser>) => {
     const { email, password, ...rest } = payload;
@@ -75,22 +76,38 @@ const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken:
 
 }
 
-const getAllUsers = async () => {
+const getAllUsers = async (query: Record<string, string>) => {
 
-    const users = await User.find({});
+    const queryBuilder = new QueryBuilder(User.find(), query)
 
-    const totalUsers = await User.countDocuments()
+    const users = await queryBuilder
+        .search(["email", "name"])
+        .filter()
+        .sort()
+        .fields()
+        .paginate()
+
+    const [data, meta] = await Promise.all([
+        users.build(),
+        queryBuilder.getMeta()
+    ])
+    return {
+        data: data,
+        meta: meta
+    }
+}
+const getSingleUser = async (id: string) => {
+    const result = await User.findById(id)
 
     return {
-        data: users,
-        meta: {
-            total: totalUsers
-        }
+        data: result
+
     }
 }
 
 export const userServices = {
     createUser,
     getAllUsers,
-    updateUser
+    updateUser,
+    getSingleUser
 }

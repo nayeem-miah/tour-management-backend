@@ -1,3 +1,4 @@
+
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { tourSearchableFields } from "./tour.constant";
 import { ITour, ITourType } from "./tour.interface";
@@ -10,15 +11,15 @@ const createTour = async (payload: ITour) => {
         throw new Error("A tour with this title already exists.");
     }
 
-    const baseSlug = payload.title.toLowerCase().split(" ").join("-")
-    let slug = `${baseSlug}`
+    // const baseSlug = payload.title.toLowerCase().split(" ").join("-")
+    // let slug = `${baseSlug}`
 
-    let counter = 0;
-    while (await Tour.exists({ slug })) {
-        slug = `${slug}-${counter++}` // dhaka-division-2
-    }
+    // let counter = 0;
+    // while (await Tour.exists({ slug })) {
+    //     slug = `${slug}-${counter++}` // dhaka-division-2
+    // }
 
-    payload.slug = slug;
+    // payload.slug = slug;
 
     const tour = await Tour.create(payload)
 
@@ -26,8 +27,8 @@ const createTour = async (payload: ITour) => {
 };
 
 
-const getAllTours = async (query: Record<string, string>) => {
 
+const getAllTours = async (query: Record<string, string>) => {
 
     const queryBuilder = new QueryBuilder(Tour.find(), query)
 
@@ -38,21 +39,100 @@ const getAllTours = async (query: Record<string, string>) => {
         .fields()
         .paginate()
 
+
     // const meta = await queryBuilder.getMeta()
+
 
     const [data, meta] = await Promise.all([
         tours.build(),
         queryBuilder.getMeta()
     ])
 
-
     return {
-        data,
-        meta
+        data: data,
+        meta: meta
     }
 };
 
 
+
+// const getAllTours = async (query: Record<string, string>) => {
+
+//     const filter = query
+
+//     const searchTerm = query.searchTerm || "";
+//     const sort = query.sort || "-createdAt";
+//     // field filtering
+//     const fields = query.fields?.split(",").join(" ") || "";
+
+//     // old  ----> title,location
+//     // new -----> title location
+
+//     //------- pagination ----
+//     //  pagination --> ?page=30&limit=10
+//     // skip = (page -1) * limit
+//     const page = Number(query.page) || 1
+//     const limit = Number(query.limit) || 10
+
+//     const skip = (page - 1) * limit
+
+
+//     // delete filter["searchTerm"];
+//     // delete filter["sort"];
+//     for (const field of excludeField) {
+//         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+//         delete filter[field];
+//     }
+
+
+//     const searchQuery = { $or: tourSearchableFields.map(field => ({ [field]: { $regex: searchTerm, $options: "i" } })) }
+
+
+//     // const data = await Tour.find(
+//     //     {
+//     //     // title: { $regex: searchTerm, $options: "i" }
+
+//     //     $or: [
+//     //         { title: { $regex: searchTerm, $options: "i" } },
+//     //         { description: { $regex: searchTerm, $options: "i" } },
+//     //         { location: { $regex: searchTerm, $options: "i" } }
+//     //     ]
+//     // })
+
+
+//     // const tours = await Tour.find(searchQuery).find(filter).sort(sort).select(fields).skip(skip).limit(limit);
+
+//     const filterQuery = Tour.find(filter)
+
+//     const tours = filterQuery.find(searchQuery)
+
+//     const allTours = await tours.sort(sort).select(fields).skip(skip).limit(limit);
+
+//     //  document count
+//     const totalTours = await Tour.countDocuments();
+//     const totalPage = Math.ceil(totalTours / limit);
+
+//     const meta = {
+//         page: page,
+//         limit: limit,
+//         total: totalTours,
+//         totalPage: totalPage
+//     }
+
+//     return {
+//         data: allTours,
+//         meta: meta
+//     }
+// };
+
+const getSingleTour = async (slug: string) => {
+    const result = await Tour.findOne({ slug })
+
+    return {
+        data: result
+    }
+
+};
 
 const updateTour = async (id: string, payload: Partial<ITour>) => {
 
@@ -120,6 +200,15 @@ const deleteTourType = async (id: string) => {
     return await TourType.findByIdAndDelete(id);
 };
 
+const getSingleTourTypes = async (id: string) => {
+    const result = await TourType.findById(id)
+
+    return {
+        data: result
+    }
+
+};
+
 
 
 export const TourServices = {
@@ -127,9 +216,11 @@ export const TourServices = {
     getAllTours,
     updateTour,
     deleteTour,
+    getSingleTour,
 
     createTourType,
     getAllTourTypes,
     updateTourType,
-    deleteTourType
+    deleteTourType,
+    getSingleTourTypes
 }

@@ -1,3 +1,4 @@
+import { QueryBuilder } from "../../utils/QueryBuilder";
 import { IDivision } from "./division.interface";
 import { Division } from "./division.model";
 
@@ -9,29 +10,39 @@ const createDivision = async (payload: Partial<IDivision>) => {
         throw new Error("A division with this name already exists.");
     }
 
-    const baseSlug = payload.name?.toLowerCase().split(" ").join("-")
-    let slug = `${baseSlug}-division`;
+    // const baseSlug = payload.name?.toLowerCase().split(" ").join("-")
+    // let slug = `${baseSlug}-division`;
 
-    let counter = 0
-    while (await Division.exists({ slug })) {
-        slug = `${slug}-${counter++}`  // dhaka-division-1
-    }
+    // let counter = 0
+    // while (await Division.exists({ slug })) {
+    //     slug = `${slug}-${counter++}`  // dhaka-division-1
+    // }
 
-    payload.slug = slug;
+    // payload.slug = slug;
 
     const division = await Division.create(payload);
     return division
 };
 
-const getAllDivision = async () => {
-    const division = await Division.find();
-    const totalDivisions = await Division.countDocuments();
+const getAllDivision = async (query: Record<string, string>) => {
+
+    const queryBuilder = new QueryBuilder(Division.find(), query)
+
+    const divisions = await queryBuilder
+        .search(["name"])
+        .filter()
+        .sort()
+        .fields()
+        .paginate()
+
+    const [data, meta] = await Promise.all([
+        divisions.build(),
+        queryBuilder.getMeta()
+    ])
 
     return {
-        data: division,
-        meta: {
-            total: totalDivisions
-        }
+        data: data,
+        meta: meta
     }
 }
 

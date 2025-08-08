@@ -33,6 +33,7 @@ export class QueryBuilder<T> {
         return this
     }
 
+
     sort(): this {
 
         const sort = this.query.sort || "-createdAt";

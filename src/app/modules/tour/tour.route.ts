@@ -9,6 +9,7 @@ const router = Router();
 
 /* ------------------ TOUR TYPE ROUTES -------------------- */
 router.get("/tour-types", TourController.getAllTourTypes);
+router.get("/:id", TourController.getSingleTourTypes)
 
 router.post(
     "/create-tour-type",
@@ -33,7 +34,7 @@ router.delete("/tour-types/:id",
 // --------------Tour Route-----------------
 
 router.get("/", TourController.getAllTours);
-
+router.get("/:slug", TourController.getSingleTour);
 router.post("/create",
     checkAuth(Role.SUPER_ADMIN, Role.ADMIN),
     validateRequest(createTourZodSchema),

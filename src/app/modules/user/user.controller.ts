@@ -77,14 +77,28 @@ const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await userServices.getAllUsers();
+    const query = req.query
+    const result = await userServices.getAllUsers(query as Record<string, string>);
 
     sendResponse(res, {
         success: true,
-        statusCode: StatusCodes.CREATED,
+        statusCode: StatusCodes.OK,
         message: "all users retrieved  successfully",
         data: result.data,
         meta: result.meta
+
+    })
+})
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getSingleUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id
+    const result = await userServices.getSingleUser(id);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "user retrieved successfully",
+        data: result.data
 
     })
 })
@@ -93,7 +107,8 @@ const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFun
 export const UserControllers = {
     createUser,
     getAllUsers,
-    updateUser
+    updateUser,
+    getSingleUser
 };
 
 /**

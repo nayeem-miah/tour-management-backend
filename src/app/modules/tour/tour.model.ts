@@ -20,7 +20,6 @@ const tourSchema = new Schema<ITour>({
     },
     slug: {
         type: String,
-        required: true,
         unique: true,
         trim: true
     },
@@ -30,6 +29,8 @@ const tourSchema = new Schema<ITour>({
     costFrom: { type: Number },
     startDay: { type: Date },
     endDay: { type: Date },
+    departureLocation: { type: String },
+    arrivalLocation: { type: String },
     included: { type: [String], default: [] },
     excluded: { type: [String], default: [] },
     amenities: { type: [String], default: [] },
@@ -54,21 +55,21 @@ const tourSchema = new Schema<ITour>({
 
 
 
-// tourSchema.pre("save", async function (next) {
+tourSchema.pre("save", async function (next) {
 
-//     if (this.isModified("title")) {
-//         const baseSlug = this.title.toLowerCase().split(" ").join("-")
-//         let slug = `${baseSlug}`
+    if (this.isModified("title")) {
+        const baseSlug = this.title.toLowerCase().split(" ").join("-")
+        let slug = `${baseSlug}`
 
-//         let counter = 0;
-//         while (await Tour.exists({ slug })) {
-//             slug = `${slug}-${counter++}`
-//         }
+        let counter = 0;
+        while (await Tour.exists({ slug })) {
+            slug = `${slug}-${counter++}`
+        }
 
-//         this.slug = slug;
-//     }
-//     next()
-// })
+        this.slug = slug;
+    }
+    next()
+})
 
 
 tourSchema.pre("findOneAndUpdate", async function (next) {
