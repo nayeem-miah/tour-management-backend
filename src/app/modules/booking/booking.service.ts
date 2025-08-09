@@ -27,13 +27,13 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
 
     try {
         const user = await User.findById(userId);
-        console.log(user);
+
         if (!user?.phone || !user.address) {
             throw new AppError(StatusCodes.BAD_REQUEST, "Please Update Your Profile to Book a Tour.")
         }
 
         const tour = await Tour.findById(payload.tour).select("costFrom")
-        console.log(tour);
+
         if (!tour?.costFrom) {
             throw new AppError(StatusCodes.BAD_REQUEST, "No Tour Cost Found!")
         }
@@ -78,6 +78,11 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
         throw error
     }
 };
+
+// frontend --(localhost:5173)-> tour --> booking(pending)--> payment(unpaid) --- ssl Commerce page----> payment complete --> Backend(localhost:5000)---> update payment(paid) and booking(confirm) ---> redirect frontend(localhost:5173/payment/success)
+
+// frontend --(localhost:5173)-> tour --> booking(pending)--> payment(unpaid) --- ssl Commerce page----> payment failed/cancel --> Backend(localhost:5000)---> update payment(fail/cancel) and booking(failed/cancel) ---> redirect frontend(localhost:5173/payment/fail)
+
 const getAllBookings = async () => {
 
     return {}

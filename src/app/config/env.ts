@@ -19,10 +19,16 @@ interface EnvConfig {
     GOOGLE_CALLBACK_URL: string;
     EXPRESS_SESSION: string;
     FRONTEND_URL: string
+    SSL: {
+        SSL_STORE_ID: string,
+        SSL_STORE_PASS: string,
+        SSL_PAYMENT_API: string,
+        SSL_VALIDATION_API: string,
+    }
 }
 
 const loadEnvVariables = (): EnvConfig => {
-    const requiredEnvVariables: string[] = ["PORT", "DB_URL", "NODE_ENV", "JWT_ACCESS_SECRET", "JWT_ACCESS_EXPIRES", "BCRYPT_SLOT_ROUND", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD", "JWT_REFRESH_SECRET", "JWT_REFRESH_EXPIRE", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GOOGLE_CALLBACK_URL", "EXPRESS_SESSION", "FRONTEND_URL"];
+    const requiredEnvVariables: string[] = ["PORT", "DB_URL", "NODE_ENV", "JWT_ACCESS_SECRET", "JWT_ACCESS_EXPIRES", "BCRYPT_SLOT_ROUND", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD", "JWT_REFRESH_SECRET", "JWT_REFRESH_EXPIRE", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GOOGLE_CALLBACK_URL", "EXPRESS_SESSION", "FRONTEND_URL", "SSL_STORE_ID", "SSL_STORE_PASS", "SSL_PAYMENT_API", "SSL_VALIDATION_API"];
 
     requiredEnvVariables.forEach(key => {
         if (!process.env[key]) {
@@ -45,6 +51,14 @@ const loadEnvVariables = (): EnvConfig => {
         GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
         EXPRESS_SESSION: process.env.EXPRESS_SESSION as string,
         FRONTEND_URL: process.env.FRONTEND_URL as string,
+
+        // ssl
+        SSL: {
+            SSL_STORE_ID: process.env.SSL_STORE_ID as string,
+            SSL_STORE_PASS: process.env.SSL_STORE_PASS as string,
+            SSL_PAYMENT_API: process.env.FRONTEND_URL as string,
+            SSL_VALIDATION_API: process.env.SSL_VALIDATION_API as string,
+        }
     }
 };
 
