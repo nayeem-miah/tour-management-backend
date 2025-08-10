@@ -32,6 +32,7 @@ const getAllBookings = catchAsync(async (req: Request, res: Response) => {
 
     })
 })
+
 const getUsersBooking = catchAsync(async (req: Request, res: Response) => {
 
     const decodeToken = req.user as JwtPayload
@@ -45,6 +46,7 @@ const getUsersBooking = catchAsync(async (req: Request, res: Response) => {
 
     })
 })
+
 const getSingleBooking = catchAsync(async (req: Request, res: Response) => {
     const bookingId = req.params.bookingId
     const booking = await BookingServices.getBookingsById(bookingId);
@@ -56,6 +58,7 @@ const getSingleBooking = catchAsync(async (req: Request, res: Response) => {
         data: booking.data
     })
 })
+
 const updateBooking = catchAsync(async (req: Request, res: Response) => {
     const update = await BookingServices.updateBooking();
 

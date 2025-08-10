@@ -129,6 +129,7 @@ const getAllBookings = async (query: Record<string, string>) => {
 }
 const getUsersBooking = async (userId: string) => {
     const booking = await Booking.find({ user: userId })
+        .populate("tour user")
     return {
         data: booking
     }
