@@ -135,6 +135,7 @@ const getUsersBooking = async (userId: string) => {
 }
 const getBookingsById = async (bookingId: string) => {
     const booking = await Booking.findById(bookingId);
+
     return {
         data: booking
     }

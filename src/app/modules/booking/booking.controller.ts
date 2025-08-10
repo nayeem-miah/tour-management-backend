@@ -54,7 +54,6 @@ const getSingleBooking = catchAsync(async (req: Request, res: Response) => {
         success: true,
         message: "Booking received success",
         data: booking.data
-
     })
 })
 const updateBooking = catchAsync(async (req: Request, res: Response) => {
