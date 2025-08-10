@@ -17,11 +17,12 @@ const createBooking = catchAsync(async (req: Request, res: Response) => {
         success: true,
         message: "Booking created success",
         data: booking
-
     })
 })
+
 const getAllBookings = catchAsync(async (req: Request, res: Response) => {
-    const bookings = await BookingServices.getAllBookings();
+    const query = req.query;
+    const bookings = await BookingServices.getAllBookings(query as Record<string, string>);
 
     sendResponse(res, {
         statusCode: StatusCodes.OK,
@@ -31,8 +32,11 @@ const getAllBookings = catchAsync(async (req: Request, res: Response) => {
 
     })
 })
+
 const getUsersBooking = catchAsync(async (req: Request, res: Response) => {
-    const bookings = await BookingServices.getUsersBooking();
+
+    const decodeToken = req.user as JwtPayload
+    const bookings = await BookingServices.getUsersBooking(decodeToken.userId);
 
     sendResponse(res, {
         statusCode: StatusCodes.OK,
@@ -42,17 +46,19 @@ const getUsersBooking = catchAsync(async (req: Request, res: Response) => {
 
     })
 })
+
 const getSingleBooking = catchAsync(async (req: Request, res: Response) => {
-    const booking = await BookingServices.getBookingsById();
+    const bookingId = req.params.bookingId
+    const booking = await BookingServices.getBookingsById(bookingId);
 
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
         message: "Booking received success",
-        data: booking
-
+        data: booking.data
     })
 })
+
 const updateBooking = catchAsync(async (req: Request, res: Response) => {
     const update = await BookingServices.updateBooking();
 
