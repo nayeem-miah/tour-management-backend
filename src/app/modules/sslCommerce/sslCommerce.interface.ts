@@ -1,5 +1,5 @@
 export interface ISslCommerce {
-    amount: string;
+    amount: number;
     transactionId: string;
     name: string;
     email: string;

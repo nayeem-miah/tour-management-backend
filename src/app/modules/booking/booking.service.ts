@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../errorHelpers/appError";
 import { User } from "../user/user.model"
@@ -6,6 +7,8 @@ import { Booking } from "./booking.model";
 import { Payment } from "../payment/payment.model";
 import { PAYMENT_STATUS } from "../payment/payment.interface";
 import { Tour } from "../tour/tour.model";
+import { SSLService } from "../sslCommerce/sslCommerce.service";
+import { ISslCommerce } from "../sslCommerce/sslCommerce.interface";
 
 const getTransactionId = () => {
     return `tran_${Date.now()}_${Math.floor(Math.random() * 1000)}`
@@ -64,12 +67,31 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
             .populate("tour", "title costFrom")
             .populate("payment");
 
+        // SSL
+        const userAddress = (updatedBooking?.user as any).address
+        const userEmail = (updatedBooking?.user as any).email
+        const userPhoneNumber = (updatedBooking?.user as any).phone
+        const userName = (updatedBooking?.user as any).name
 
+        const sslPayload: ISslCommerce = {
+            address: userAddress,
+            email: userEmail,
+            phoneNumber: userPhoneNumber,
+            name: userName,
+            amount: amount,
+            transactionId: transactionId
+        }
+
+        const sslPayment = await SSLService.sslPaymentInit(sslPayload)
+
+        console.log(sslPayment);
 
         await session.commitTransaction(); //transaction
         session.endSession()
         return {
+            paymentUrl: sslPayment.GatewayPageURL,
             booking: updatedBooking
+
         }
     } catch (error) {
         await session.abortTransaction(); // rollback
