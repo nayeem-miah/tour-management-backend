@@ -9,18 +9,25 @@ import { PAYMENT_STATUS } from "../payment/payment.interface";
 import { Tour } from "../tour/tour.model";
 import { SSLService } from "../sslCommerce/sslCommerce.service";
 import { ISslCommerce } from "../sslCommerce/sslCommerce.interface";
+import { QueryBuilder } from "../../utils/QueryBuilder";
+import { tourSearchableFields } from "../tour/tour.constant";
 
 const getTransactionId = () => {
     return `tran_${Date.now()}_${Math.floor(Math.random() * 1000)}`
 }
 
 /** 
+ * -------------Transaction rollBack
  * duplicate db collection / replace
  * replica db--> [ create Booking --> create Payment ---> update Booking (payment id )]--> real db
- * 
- * 
  */
 
+
+
+// ----------------------ssl------------------
+// frontend --(localhost:5173)-> tour --> booking(pending)--> payment(unpaid) --- ssl Commerce page----> payment complete --> Backend(localhost:5000)---> update payment(paid) and booking(confirm) ---> redirect frontend(localhost:5173/payment/success)
+
+// frontend --(localhost:5173)-> tour --> booking(pending)--> payment(unpaid) --- ssl Commerce page----> payment failed/cancel --> Backend(localhost:5000)---> update payment(fail/cancel) and booking(failed/cancel) ---> redirect frontend(localhost:5173/payment/fail)
 
 const createBooking = async (payload: Partial<IBooking>, userId: string) => {
     const transactionId = getTransactionId()
@@ -101,21 +108,36 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
     }
 };
 
-// frontend --(localhost:5173)-> tour --> booking(pending)--> payment(unpaid) --- ssl Commerce page----> payment complete --> Backend(localhost:5000)---> update payment(paid) and booking(confirm) ---> redirect frontend(localhost:5173/payment/success)
+const getAllBookings = async (query: Record<string, string>) => {
+    const queryBuilder = new QueryBuilder(Booking.find(), query);
 
-// frontend --(localhost:5173)-> tour --> booking(pending)--> payment(unpaid) --- ssl Commerce page----> payment failed/cancel --> Backend(localhost:5000)---> update payment(fail/cancel) and booking(failed/cancel) ---> redirect frontend(localhost:5173/payment/fail)
+    const bookings = await queryBuilder
+        .search([...tourSearchableFields, "user"])
+        .filter()
+        .sort()
+        .fields()
+        .paginate()
 
-const getAllBookings = async () => {
-
-    return {}
+    const [data, meta] = await Promise.all([
+        bookings.build(),
+        queryBuilder.getMeta()
+    ])
+    return {
+        data: data,
+        meta: meta
+    }
 }
-const getUsersBooking = async () => {
-
-    return {}
+const getUsersBooking = async (userId: string) => {
+    const booking = await Booking.find({ user: userId })
+    return {
+        data: booking
+    }
 }
-const getBookingsById = async () => {
-
-    return {}
+const getBookingsById = async (bookingId: string) => {
+    const booking = await Booking.findById(bookingId);
+    return {
+        data: booking
+    }
 }
 const updateBooking = async () => {
 
