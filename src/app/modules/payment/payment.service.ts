@@ -1,7 +1,46 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { StatusCodes } from "http-status-codes";
+import AppError from "../../errorHelpers/appError";
 import { BOOKING_STATUS } from "../booking/booking.interface";
 import { Booking } from "../booking/booking.model";
 import { PAYMENT_STATUS } from "./payment.interface";
 import { Payment } from "./payment.model";
+import { ISslCommerce } from "../sslCommerce/sslCommerce.interface";
+import { SSLService } from "../sslCommerce/sslCommerce.service";
+
+const initPayment = async (bookingId: string) => {
+    const payment = await Payment.findOne({ booking: bookingId });
+
+    if (!payment) {
+        throw new AppError(StatusCodes.NOT_FOUND, "Payment not found, You have not book tour")
+    };
+
+    const booking = await Booking.findById(payment.booking);
+
+    // SSL
+    const userAddress = (booking?.user as any).address
+    const userEmail = (booking?.user as any).email
+    const userPhoneNumber = (booking?.user as any).phone
+    const userName = (booking?.user as any).name
+
+    const sslPayload: ISslCommerce = {
+        address: userAddress,
+        email: userEmail,
+        phoneNumber: userPhoneNumber,
+        name: userName,
+        amount: payment.amount,
+        transactionId: payment.transactionId
+    }
+
+    const sslPayment = await SSLService.sslPaymentInit(sslPayload)
+
+    return {
+        paymentUrl: sslPayment.GatewayPageURL,
+    }
+
+
+
+};
 
 const successPayment = async (query: Record<string, string>) => {
 
@@ -38,8 +77,6 @@ const successPayment = async (query: Record<string, string>) => {
         // throw new AppError(httpStatus.BAD_REQUEST, error) ❌❌
         throw error
     }
-
-
 };
 
 const failPayment = async (query: Record<string, string>) => {
@@ -114,6 +151,7 @@ const cancelPayment = async (query: Record<string, string>) => {
 
 
 export const PaymentService = {
+    initPayment,
     successPayment,
     failPayment,
     cancelPayment
