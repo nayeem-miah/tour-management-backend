@@ -1,8 +1,9 @@
-import axios from "axios";
+
 import { envVars } from "../../config/env";
 import { ISslCommerce } from "./sslCommerce.interface";
 import AppError from "../../errorHelpers/appError";
 import { StatusCodes } from "http-status-codes";
+import axios from "axios";
 
 const sslPaymentInit = async (payload: ISslCommerce) => {
     try {
