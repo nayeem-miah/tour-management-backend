@@ -112,7 +112,7 @@ const getAllBookings = async (query: Record<string, string>) => {
     const queryBuilder = new QueryBuilder(Booking.find(), query);
 
     const bookings = await queryBuilder
-        .search([...tourSearchableFields, "user"])
+        .search(tourSearchableFields)
         .filter()
         .sort()
         .fields()
