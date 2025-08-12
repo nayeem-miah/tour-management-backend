@@ -1,3 +1,4 @@
+import { deleteImageFromCloudinary } from "../../config/cloudinary.config";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { IDivision } from "./division.interface";
 import { Division } from "./division.model";
@@ -54,7 +55,6 @@ const getSingleDivision = async (slug: string) => {
     }
 }
 
-
 const updateDivision = async (id: string, payload: Partial<IDivision>) => {
 
     const existingDivision = await Division.findById(id);
@@ -85,6 +85,11 @@ const updateDivision = async (id: string, payload: Partial<IDivision>) => {
     // }
 
     const updatedDivision = await Division.findByIdAndUpdate(id, payload, { new: true, runValidators: true })
+
+    //  mongoose update success the delete old image
+    if (payload.thumbnail && existingDivision.thumbnail) {
+        await deleteImageFromCloudinary(existingDivision.thumbnail)
+    }
 
     return updatedDivision
 
