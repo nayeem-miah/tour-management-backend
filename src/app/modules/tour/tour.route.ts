@@ -43,9 +43,9 @@ router.post("/create",
     TourController.createTour
 );
 
-//  patch route 
 router.patch("/:id",
     checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+    multerUpload.array("files"),
     validateRequest(updateTourZodSchema),
     TourController.updateTour
 );
