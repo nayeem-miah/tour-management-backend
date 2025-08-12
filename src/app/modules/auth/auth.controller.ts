@@ -17,7 +17,7 @@ const credentialsLogin = catchAsync(async (req: Request, res: Response, next: Ne
         if (err) {
             // console.log("from error");
             // return next(err)
-            return next(new AppError(401, err))
+            return next(new AppError(err.statusCode, err.message))
         };
         if (!user) {
             // console.log("from not user");

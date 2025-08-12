@@ -4,6 +4,7 @@ import { AuthControllers } from "./auth.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
 import passport from "passport";
+import { envVars } from "../../config/env";
 
 const router = Router();
 
@@ -23,6 +24,6 @@ router.get("/google", async (req: Request, res: Response, next: NextFunction) =>
 })
 
 // /api/v1/auth/callback?state=/booking 
-router.get("/google/callback", passport.authenticate("google", { failureRedirect: "/login" }), AuthControllers.googleCallbackController)
+router.get("/google/callback", passport.authenticate("google", { failureRedirect: `${envVars.FRONTEND_URL}/login?error=there is some issue with your account. Please contact our support team.` }), AuthControllers.googleCallbackController)
 
 export const AuthRoutes = router;
