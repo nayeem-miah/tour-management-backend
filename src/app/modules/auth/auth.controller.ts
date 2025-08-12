@@ -17,7 +17,7 @@ const credentialsLogin = catchAsync(async (req: Request, res: Response, next: Ne
         if (err) {
             // console.log("from error");
             // return next(err)
-            return next(new AppError(401, err))
+            return next(new AppError(err.statusCode, err.message))
         };
         if (!user) {
             // console.log("from not user");
@@ -133,6 +133,35 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
         data: null
     })
 });
+const changePassword = catchAsync(async (req: Request, res: Response) => {
+    const decodedToken = req.user;
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+
+
+    await authServices.changePassword(oldPassword, newPassword, decodedToken as JwtPayload);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "User password changed successfully",
+        data: null
+    })
+});
+
+const setPassword = catchAsync(async (req: Request, res: Response) => {
+    const decodedToken = req.user as JwtPayload;
+    const { password } = req.body;
+
+    await authServices.setPassword(decodedToken.userId, password);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "User password changed successfully",
+        data: null
+    })
+});
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -162,5 +191,7 @@ export const AuthControllers = {
     getNewAccessToken,
     logout,
     resetPassword,
+    changePassword,
+    setPassword,
     googleCallbackController
 }

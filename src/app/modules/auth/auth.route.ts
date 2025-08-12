@@ -4,6 +4,7 @@ import { AuthControllers } from "./auth.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
 import passport from "passport";
+import { envVars } from "../../config/env";
 
 const router = Router();
 
@@ -11,6 +12,8 @@ router.post("/login", AuthControllers.credentialsLogin);
 router.post("/refresh-token", AuthControllers.getNewAccessToken);
 router.post("/logout", AuthControllers.logout);
 router.post("/reset-password", checkAuth(...Object.values(Role)), AuthControllers.resetPassword);
+router.post("/change-password", checkAuth(...Object.values(Role)), AuthControllers.changePassword);
+router.post("/set-password", checkAuth(...Object.values(Role)), AuthControllers.setPassword);
 
 // booking ---> /login ----> success login --> /booking frontend
 // /login ----> successfully google login ---> frontend
@@ -21,6 +24,6 @@ router.get("/google", async (req: Request, res: Response, next: NextFunction) =>
 })
 
 // /api/v1/auth/callback?state=/booking 
-router.get("/google/callback", passport.authenticate("google", { failureRedirect: "/login" }), AuthControllers.googleCallbackController)
+router.get("/google/callback", passport.authenticate("google", { failureRedirect: `${envVars.FRONTEND_URL}/login?error=there is some issue with your account. Please contact our support team.` }), AuthControllers.googleCallbackController)
 
 export const AuthRoutes = router;

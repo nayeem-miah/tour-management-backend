@@ -11,10 +11,9 @@ import { SSLService } from "../sslCommerce/sslCommerce.service";
 import { ISslCommerce } from "../sslCommerce/sslCommerce.interface";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { tourSearchableFields } from "../tour/tour.constant";
+import { getTransactionId } from "../../utils/getTransactionId";
 
-const getTransactionId = () => {
-    return `tran_${Date.now()}_${Math.floor(Math.random() * 1000)}`
-}
+
 
 /** 
  * -------------Transaction rollBack
@@ -127,6 +126,7 @@ const getAllBookings = async (query: Record<string, string>) => {
         meta: meta
     }
 }
+
 const getUsersBooking = async (userId: string) => {
     const booking = await Booking.find({ user: userId })
         .populate("tour user")
@@ -134,6 +134,7 @@ const getUsersBooking = async (userId: string) => {
         data: booking
     }
 }
+
 const getBookingsById = async (bookingId: string) => {
     const booking = await Booking.findById(bookingId);
 
@@ -141,6 +142,7 @@ const getBookingsById = async (bookingId: string) => {
         data: booking
     }
 }
+
 const updateBooking = async () => {
 
     return {}

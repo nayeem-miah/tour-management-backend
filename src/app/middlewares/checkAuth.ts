@@ -31,6 +31,11 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
             throw new AppError(StatusCodes.BAD_REQUEST, "User is deleted");
         }
 
+        if (!isUserExists.isVerified) {
+            throw new AppError(StatusCodes.BAD_REQUEST, "User is not verified");
+        }
+
+
         if (!authRoles.includes(verifyToken.role)) {
             throw new AppError(StatusCodes.BAD_REQUEST, "you are not permeated to view this route")
         }
