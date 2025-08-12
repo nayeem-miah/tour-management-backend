@@ -11,7 +11,7 @@ const storage = new CloudinaryStorage({
             const fileName = file.originalname
                 .toLowerCase()
                 .replace(/\s+/g, "-") //empty space remove
-                .replace(/\./g, "-")
+                .replace(/\./g, "-")  // remove . replace -
                 // eslint-disable-next-line no-useless-escape
                 .replace(/[^a-z0-9\-\.]/g, "")  //non alpha numeric -- @ $
 
