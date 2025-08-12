@@ -8,12 +8,27 @@ import { handleCastError } from "../helpers/handleCastError";
 import { handleZodError } from "../helpers/handleZodError";
 import { handleValidationError } from "../helpers/handleValidationError";
 import { TErrorSource } from "../interfaces/error.types";
+import { deleteImageFromCloudinary } from "../config/cloudinary.config";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const globalErrorHandler = async (err: any, req: Request, res: Response, next: NextFunction) => {
     if (envVars.NODE_ENV === "development") {
         console.log(err);
     }
+
+    // single file deleted
+    if (req.file) {
+        await deleteImageFromCloudinary(req.file.path)
+    }
+
+    // multiple files deleted
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        const imageUrls = (req.files as Express.Multer.File[]).map(file => file.path);
+
+        await Promise.all(imageUrls.map((url) => deleteImageFromCloudinary(url)))
+    }
+
+
     let errorSources: TErrorSource[] = [];
 
     let statusCode = 500;

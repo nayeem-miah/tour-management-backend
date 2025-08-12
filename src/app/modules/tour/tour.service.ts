@@ -6,6 +6,9 @@ import { Tour, TourType } from "./tour.model";
 
 
 const createTour = async (payload: ITour) => {
+
+    // throw new Error("some error then image deleted from cloudinary ")
+
     const existingTour = await Tour.findOne({ title: payload.title });
     if (existingTour) {
         throw new Error("A tour with this title already exists.");
