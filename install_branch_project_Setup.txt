@@ -79,3 +79,9 @@ SMTP_PORT=465
 SMTP_USER=your email
 SMTP_PASS=  gmail --> on 2 step verify --> then security --> app password search get a token
 SMTP_FROM=your email
+
+
+
+ --------------- OTP implement with redis-------------------
+ create a redis account and install --------> npm install redis
+ 
