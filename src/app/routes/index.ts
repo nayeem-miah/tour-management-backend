@@ -5,6 +5,7 @@ import { DivisionRoutes } from "../modules/division/division.route";
 import { TourRoutes } from "../modules/tour/tour.route";
 import { BookingRouter } from "../modules/booking/booking.route";
 import { PaymentRouter } from "../modules/payment/payment.route";
+import { OtpRouter } from "../modules/otp/otp.route";
 
 export const router = Router();
 interface IModule {
@@ -38,6 +39,10 @@ const moduleRoutes: IModule[] = [
     {
         path: "/payment",
         route: PaymentRouter
+    },
+    {
+        path: "/otp",
+        route: OtpRouter
     }
 ];
 
