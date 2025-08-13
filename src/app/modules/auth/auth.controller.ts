@@ -117,22 +117,19 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
     })
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const decodedToken = req.user;
-    const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword;
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
 
 
-    await authServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
+    const decodedToken = req.user
+    await authServices.resetPassword(req.body, decodedToken as JwtPayload);
 
     sendResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
-        message: "User password changed successfully",
-        data: null
+        message: "Password Changed Successfully",
+        data: null,
     })
-});
+})
 const changePassword = catchAsync(async (req: Request, res: Response) => {
     const decodedToken = req.user;
     const oldPassword = req.body.oldPassword;
@@ -184,6 +181,21 @@ const googleCallbackController = catchAsync(async (req: Request, res: Response, 
     res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`)
 });
 
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+    const { email } = req.body;
+    if (!email) {
+        throw new AppError(404, "Email not found")
+    }
+    await authServices.forgotPassword(email);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "email sent successfully",
+        data: null
+    })
+});
+
 
 
 export const AuthControllers = {
@@ -193,5 +205,6 @@ export const AuthControllers = {
     resetPassword,
     changePassword,
     setPassword,
-    googleCallbackController
+    googleCallbackController,
+    forgotPassword
 }

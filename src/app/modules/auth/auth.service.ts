@@ -1,13 +1,14 @@
 
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../errorHelpers/appError";
-import { IAuthProvider, IUser } from "../user/user.interface";
+import { IAuthProvider, IsActive, IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import bcrypt from 'bcryptjs';
 import { createNewAccessTokenWithRefreshToken, createUserToken } from "../../utils/userToken";
 import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../../config/env";
-
+import jwt from "jsonwebtoken"
+import { sendEmail } from "../../utils/sendEmail";
 
 const credentialsLogin = async (payload: Partial<IUser>) => {
     const { email, password } = payload;
@@ -49,29 +50,38 @@ const getNewAccessToken = async (refreshToken: string) => {
 
 };
 
-const resetPassword = async (oldPassword: string, newPassword: string, decodedToken: JwtPayload) => {
 
-    const user = await User.findById(decodedToken.userId);
-    if (!user) {
-        throw new AppError(StatusCodes.BAD_REQUEST, "user not found ")
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const resetPassword = async (payload: Record<string, any>, decodedToken: JwtPayload) => {
+
+    if (payload.id != decodedToken.userId) {
+        throw new AppError(401, "You can not reset your password")
     }
 
-    const isOldPasswordMatch = await bcrypt.compare(oldPassword, user.password as string);
-
-    if (!isOldPasswordMatch) {
-        throw new AppError(StatusCodes.BAD_REQUEST, "old password does't match")
+    const isUserExist = await User.findById(decodedToken.userId)
+    if (!isUserExist) {
+        throw new AppError(401, "User does not exist")
     }
 
-    user.password = await bcrypt.hash(newPassword, Number(envVars.BCRYPT_SLOT_ROUND));
-    user.save()
-    return true
+    const hashedPassword = await bcrypt.hash(
+        payload.newPassword,
+        Number(envVars.BCRYPT_SLOT_ROUND)
+    )
+
+    isUserExist.password = hashedPassword;
+
+    await isUserExist.save()
 }
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const changePassword = async (oldPassword: string, newPassword: string, decodedToken: JwtPayload) => {
 
     return {}
 }
+
 const setPassword = async (userId: string, plainPassword: string) => {
     const user = await User.findById(userId);
 
@@ -98,6 +108,53 @@ const setPassword = async (userId: string, plainPassword: string) => {
     await user.save()
 }
 
+const forgotPassword = async (email: string) => {
+    const isUserExists = await User.findOne({ email });
+
+    if (!isUserExists) {
+        throw new AppError(StatusCodes.BAD_REQUEST, "User does not exist");
+    }
+
+    if (!isUserExists.isVerified) {
+        throw new AppError(StatusCodes.BAD_REQUEST, "User is not verified");
+    }
+
+    if (isUserExists.isActive === IsActive.BLOCKED || isUserExists.isActive === IsActive.INACTIVE) {
+        throw new AppError(StatusCodes.BAD_REQUEST, `User is ${isUserExists.isActive}`);
+    }
+
+    if (isUserExists.isDeleted) {
+        throw new AppError(StatusCodes.BAD_REQUEST, "User is deleted");
+    }
+
+
+    const jwtPayload = {
+        userId: isUserExists._id,
+        email: isUserExists.email,
+        role: isUserExists.role
+    };
+
+    const resetToken = jwt.sign(jwtPayload, envVars.JWT_ACCESS_SECRET, {
+        expiresIn: "10m"
+    })
+
+    const resetUILink = `${envVars.FRONTEND_URL}/reset-password?id=${isUserExists._id}&token=${resetToken}`
+
+    sendEmail({
+        to: isUserExists.email,
+        subject: "Password Reset",
+        templateName: "forgetPassword",
+        templateData: {
+            name: isUserExists.name,
+            resetUILink
+        }
+    })
+}
+
+/**
+ * http://localhost:5173/reset-password?id=689b6380852465d9cb4e05fb&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODliNjM4MDg1MjQ2NWQ5Y2I0ZTA1ZmIiLCJlbWFpbCI6ImRldi5uYXllZW0wMUBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1NTAxNTY3NywiZXhwIjoxNzU1MDE2Mjc3fQ.Gu6UbCHD5RtYLS7lnqv_SN3VzBjZ-ltH2MuBxjMgCZ4
+ */
+
 // user ----> login-- token (email, role , _id ) ---booking / payment / booking / payment cancel  ---token 
 
 export const authServices = {
@@ -105,5 +162,6 @@ export const authServices = {
     getNewAccessToken,
     resetPassword,
     changePassword,
-    setPassword
+    setPassword,
+    forgotPassword
 }
