@@ -30,3 +30,52 @@ npm install --save-dev eslint @eslint/js typescript typescript-eslint
 npx eslint .  ---------> folder checking ---> npx eslint ./src
 
 creating branch part-1 ---------> part-2 
+
+------------------passport js implement----------------------
+GOOGLE_CLIENT_ID=google cloud 
+GOOGLE_CLIENT_SECRET=google cloud secret
+GOOGLE_CALLBACK_URL=your backend callback url
+
+
+
+--------ssl commerce payment system implement --------------
+# ssl payment
+SSL_STORE_ID=your store id
+SSL_STORE_PASS=your store password
+SSL_PAYMENT_API="https://sandbox.sslcommerz.com/gwprocess/v3/api.php"
+SSL_VALIDATION_API="https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php"
+
+# ssl backend api
+SSL_SUCCESS_BACKEND_URL="http://localhost:5000/api/v1/payment/success"
+SSL_FAIL_BACKEND_URL="http://localhost:5000/api/v1/payment/fail"
+SSL_CANCEL_BACKEND_URL="http://localhost:5000/api/v1/payment/cancel"
+
+# ssl frontend api
+SSL_SUCCESS_FRONTEND_URL="http://localhost:5173/payment/success"
+SSL_FAIL_FRONTEND_URL="http://localhost:5173/payment/fail"
+SSL_CANCEL_FRONTEND_URL="http://localhost:5173/payment/cancel"
+
+
+------------------cloudinary implement ---------------------
+# CLOUDINARY 
+CLOUDINARY_CLOUD_NAME=sign up 
+CLOUDINARY_API_KEY=cloudinary theki api key neta hobe
+CLOUDINARY_API_SECRET=cloudinary theki
+
+resource  ----------------cloudinary--------------
+https://cloudinary.com/
+https://www.npmjs.com/package/cloudinary
+https://www.npmjs.com/package/multer
+https://www.npmjs.com/package/multer-storage-cloudinary
+
+
+
+
+ -------------nodemiller install----------------
+ go to nodemiller documentation and install nodemiller -->
+ #  SIMPLE MAIL TRANSFER PROTOCOL
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=your email
+SMTP_PASS=  gmail --> on 2 step verify --> then security --> app password search get a token
+SMTP_FROM=your email
