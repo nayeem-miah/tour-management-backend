@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // frontend --> from Data with image file ---> multer --> from data --> req(body + file)
 
-import { v2 as cloudinary } from "cloudinary";
+import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { envVars } from "./env";
 import AppError from "../errorHelpers/appError";
+import stream from "stream"
 
 // Our  folder --> image --> from data --> multer  -->ameder project na pc ta  nejer ekta folder(temporary) a image ta rkbe > req.file
 
@@ -14,6 +16,37 @@ cloudinary.config({
     api_secret: envVars.CLOUDINARY.CLOUDINARY_API_SECRET
 });
 
+
+export const uploadBufferCloudinary = async (buffer: Buffer, fileName: string): Promise<UploadApiResponse | undefined> => {
+    try {
+        return new Promise((resolve, reject) => {
+
+            const public_id = `pdf/${fileName}-${Date.now()}`;
+            const bufferStream = new stream.PassThrough();
+            bufferStream.end((buffer))
+
+            cloudinary.uploader.upload_stream(
+                {
+                    resource_type: "auto",
+                    public_id: public_id,
+                    folder: "pdf"
+                },
+                (error, result) => {
+                    if (error) {
+                        return reject(error)
+                    }
+                    resolve(result)
+                }
+            ).end(buffer)
+
+
+        })
+
+    } catch (error: any) {
+        console.log(error);
+        throw new AppError(401, `Error uploading file .Error : ${error.message}`)
+    }
+}
 
 export const deleteImageFromCloudinary = async (url: string) => {
     try {
@@ -29,7 +62,7 @@ export const deleteImageFromCloudinary = async (url: string) => {
             console.log(`file ${public_id} is deleted from cloudinary`);
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     } catch (error: any) {
         throw new AppError(401, "Cloudinary image deleted failed ", error.message)
     }
