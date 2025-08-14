@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../errorHelpers/appError";
@@ -51,8 +52,6 @@ const getNewAccessToken = async (refreshToken: string) => {
 };
 
 
-
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const resetPassword = async (payload: Record<string, any>, decodedToken: JwtPayload) => {
 
@@ -76,10 +75,20 @@ const resetPassword = async (payload: Record<string, any>, decodedToken: JwtPayl
 }
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const changePassword = async (oldPassword: string, newPassword: string, decodedToken: JwtPayload) => {
 
-    return {}
+    const user = await User.findById(decodedToken.userId)
+
+    const isOldPasswordMatch = await bcrypt.compare(oldPassword, user!.password as string)
+    if (!isOldPasswordMatch) {
+        throw new AppError(StatusCodes.UNAUTHORIZED, "Old Password does not match");
+    }
+
+    user!.password = await bcrypt.hash(newPassword, Number(envVars.BCRYPT_SLOT_ROUND))
+
+    user!.save();
+
+
 }
 
 const setPassword = async (userId: string, plainPassword: string) => {
