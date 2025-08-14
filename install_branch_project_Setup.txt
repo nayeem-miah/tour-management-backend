@@ -84,4 +84,8 @@ SMTP_FROM=your email
 
  --------------- OTP implement with redis-------------------
  create a redis account and install --------> npm install redis
+
+
+
+----------pdf kit -----------
  
