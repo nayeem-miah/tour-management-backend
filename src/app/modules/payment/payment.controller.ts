@@ -4,6 +4,7 @@ import { PaymentService } from "./payment.service";
 import { envVars } from "../../config/env";
 import { sendResponse } from "../../utils/sendResponse";
 import { StatusCodes } from "http-status-codes";
+import { SSLService } from "../sslCommerce/sslCommerce.service";
 
 const initPayment = catchAsync(async (req: Request, res: Response) => {
     const bookingId = req.params.bookingId;
@@ -53,6 +54,16 @@ const getInvoiceDownloadUrl = catchAsync(async (req: Request, res: Response) => 
         data: result
     });
 });
+const validatePayment = catchAsync(async (req: Request, res: Response) => {
+
+    await SSLService.validatePayment(req.body);
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Payment validated successfully",
+        data: null
+    });
+});
 
 
 export const PaymentController = {
@@ -60,5 +71,6 @@ export const PaymentController = {
     successPayment,
     failPayment,
     cancelPayment,
-    getInvoiceDownloadUrl
+    getInvoiceDownloadUrl,
+    validatePayment
 }
