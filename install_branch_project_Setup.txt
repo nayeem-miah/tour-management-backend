@@ -88,4 +88,25 @@ SMTP_FROM=your email
 
 
 ----------pdf kit -----------
- 
+
+
+
+ -----------------------deploy this site --------------------------------
+ vercel.json -----in root folder
+ check eslint
+ npm run build ----------> "build": "tsc"---package.json
+ check dist folder overall okay---------
+ejs folder ta copy kore dist a past korte hobe rater email sending is not working
+
+deploy on vercel
+
+replace localhost url replace by production url and --> marchent ipn url a backend er live link ta bosata hobe
+
+
+
+token related issue------
+  secure: envVars.NODE_ENV === "production",
+  sameSite: "none"
+
+ app.ts -------->> app.set("trust proxy", 1);
+
