@@ -161,7 +161,7 @@ const forgotPassword = async (email: string) => {
 }
 
 /**
- * http://localhost:5173/reset-password?id=689b6380852465d9cb4e05fb&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODliNjM4MDg1MjQ2NWQ5Y2I0ZTA1ZmIiLCJlbWFpbCI6ImRldi5uYXllZW0wMUBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1NTAxNTY3NywiZXhwIjoxNzU1MDE2Mjc3fQ.Gu6UbCHD5RtYLS7lnqv_SN3VzBjZ-ltH2MuBxjMgCZ4
+ * http://localhost:3000/reset-password?id=689b6380852465d9cb4e05fb&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODliNjM4MDg1MjQ2NWQ5Y2I0ZTA1ZmIiLCJlbWFpbCI6ImRldi5uYXllZW0wMUBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1NTAxNTY3NywiZXhwIjoxNzU1MDE2Mjc3fQ.Gu6UbCHD5RtYLS7lnqv_SN3VzBjZ-ltH2MuBxjMgCZ4
  */
 
 // user ----> login-- token (email, role , _id ) ---booking / payment / booking / payment cancel  ---token 
